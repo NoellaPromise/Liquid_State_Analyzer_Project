@@ -42,8 +42,8 @@ Students will learn backend programming by filling in missing Python code!
 
 ### Step 4 : Test your Setup
 
-1. Open Command Prompt/Terminal in your project folder
-  - Run : python liquid_analyzer.py  <!-- This will have errors because you need to fill in the blanks! -->
+**Open Command Prompt/Terminal in your project folder**
+  - Run : `python liquid_analyzer.py`  ***This will have errors because you need to fill in the blanks!***
 
 
 
