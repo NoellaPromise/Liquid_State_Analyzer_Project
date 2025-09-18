@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liquid State Analyzer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>🧪 Liquid State Analyzer</h1>
+
+      <form id="analyzerForm">
+        <div class="form-group">
+          <label for="temperature">Temperature (°C):</label>
+          <input type="number" id="temperature" step="0.1" required />
+        </div>
+
+        <div class="form-group">
+          <label for="pressure">Atmospheric Pressure (atm):</label>
+          <input type="number" id="pressure" step="0.1" value="1.0" required />
+        </div>
+
+        <div class="form-group">
+          <label for="liquid">Select Liquid:</label>
+          <select id="liquid" required>
+            <option value="">Choose a liquid...</option>
+            <option value="water">Water (H₂O)</option>
+            <option value="ethanol">Ethanol (C₂H₅OH)</option>
+            <option value="mercury">Mercury (Hg)</option>
+            <option value="nitrogen">Nitrogen (N₂)</option>
+            <option value="oxygen">Oxygen (O₂)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="analyze-button">
+          Analyze Liquid State
+        </button>
+      </form>
+
+      <div id="error" class="error"></div>
+
+      <div id="results" class="results">
+        <div class="flask-container">
+          <div class="flask-top"></div>
+          <div class="flask-neck"></div>
+          <div class="flask">
+            <div id="liquidInFlask" class="liquid-still"></div>
+          </div>
+        </div>
+
+        <div class="state-title" id="stateName">LIQUID</div>
+
+        <div class="result-info" id="liquidName">Liquid Name</div>
+        <div class="result-info" id="currentTemp">Temperature: --°C</div>
+        <div class="result-info" id="currentPressure">Pressure: -- atm</div>
+        <div class="result-info" id="stateDescription">
+          Description will appear here
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Simple JavaScript that reads from a results file created by Python
+
+      document
+        .getElementById("analyzerForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const temperature = parseFloat(
+            document.getElementById("temperature").value
+          );
+          const pressure = parseFloat(
+            document.getElementById("pressure").value
+          );
+          const liquidType = document.getElementById("liquid").value;
+
+          if (!liquidType) {
+            showError("Please select a liquid!");
+            return;
+          }
+
+          if (pressure <= 0) {
+            showError("Pressure must be greater than 0!");
+            return;
+          }
+
+          // Show message to run Python program
+          showError(
+            "Now run your Python program with these values: Temperature=" +
+              temperature +
+              "°C, Pressure=" +
+              pressure +
+              " atm, Liquid=" +
+              liquidType +
+              ". Then refresh this page to see results!"
+          );
+
+          // Try to read results from a file (this would need a local server in real implementation)
+          // For now, we'll simulate the results
+          setTimeout(() => {
+            simulateResults(temperature, pressure, liquidType);
+          }, 2000);
+        });
+
+      function simulateResults(temperature, pressure, liquidType) {
+        // This simulates what the Python backend would return
+        const liquidData = {
+          water: { name: "Water (H₂O)", freezing: 0, boiling: 100 },
+          ethanol: {
+            name: "Ethanol (C₂H₅OH)",
+            freezing: -114.1,
+            boiling: 78.4,
+          },
+          mercury: { name: "Mercury (Hg)", freezing: -38.8, boiling: 356.7 },
+          nitrogen: { name: "Nitrogen (N₂)", freezing: -210, boiling: -195.8 },
+          oxygen: { name: "Oxygen (O₂)", freezing: -218.8, boiling: -183 },
+        };
+
+        const liquid = liquidData[liquidType];
+        const adjustedBoiling = liquid.boiling + (pressure - 1) * 10;
+
+        let state, stateClass, description, flaskState;
+
+        if (temperature <= liquid.freezing) {
+          state = "SOLID (FROZEN)";
+          stateClass = "solid-state";
+          flaskState = "frozen";
+          description = "The liquid is frozen solid!";
+        } else if (temperature >= adjustedBoiling) {
+          state = "GAS (VAPOR)";
+          stateClass = "gas-state";
+          flaskState = "boiling";
+          description = "The liquid is boiling and turning to gas!";
+        } else {
+          state = "LIQUID (STILL)";
+          stateClass = "liquid-state";
+          flaskState = "still";
+          description = "The liquid is in normal liquid state.";
+        }
+
+        displayResults({
+          liquid_name: liquid.name,
+          temperature: temperature,
+          pressure: pressure,
+          state: state,
+          flask_state: flaskState,
+          description: description,
+        });
+      }
+
+      function displayResults(results) {
+        document.getElementById("error").style.display = "none";
+
+        showFlaskState(results.flask_state);
+
+        const stateElement = document.getElementById("stateName");
+        stateElement.textContent = results.state;
+        stateElement.className = "state-title";
+
+        if (results.state.includes("SOLID")) {
+          stateElement.classList.add("solid-state");
+        } else if (results.state.includes("LIQUID")) {
+          stateElement.classList.add("liquid-state");
+        } else if (results.state.includes("GAS")) {
+          stateElement.classList.add("gas-state");
+        }
+
+        document.getElementById("liquidName").textContent = results.liquid_name;
+        document.getElementById(
+          "currentTemp"
+        ).textContent = `Temperature: ${results.temperature}°C`;
+        document.getElementById(
+          "currentPressure"
+        ).textContent = `Pressure: ${results.pressure} atm`;
+        document.getElementById("stateDescription").textContent =
+          results.description;
+
+        document.getElementById("results").classList.add("show");
+      }
+
+      function showFlaskState(state) {
+        const liquidElement = document.getElementById("liquidInFlask");
+        liquidElement.className = "";
+
+        if (state === "frozen") {
+          liquidElement.className = "liquid-frozen";
+        } else if (state === "boiling") {
+          liquidElement.className = "liquid-boiling";
+        } else {
+          liquidElement.className = "liquid-still";
+        }
+      }
+
+      function showError(message) {
+        const errorDiv = document.getElementById("error");
+        errorDiv.textContent = message;
+        errorDiv.style.display = "block";
+        document.getElementById("results").classList.remove("show");
+      }
+    </script>
+  </body>
+</html>
