@@ -71,7 +71,7 @@ Complete the print statements to show liquid information.
 
 
 ## Assessment Checklist
-**Students should be able to:**
+**You should be able to:**
 
  - [ ] Explain what dictionaries are and how to use them
  - [ ] Write if/elif/else statements for decision making
