@@ -13,7 +13,7 @@ Students will learn backend programming by filling in missing Python code!
 
 
 
-Learn the basics Python [HERE](https://www.w3schools.com/python/python_intro.asp)
+Learn the basics of Python [HERE](https://www.w3schools.com/python/python_intro.asp)
 
 
 
