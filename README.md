@@ -50,7 +50,7 @@ Learn the basics of Python [HERE](https://www.w3schools.com/python/python_intro.
 
 
 
-## What Students Need to Fill In
+## What you need to fill in
 1. **Liquid Data Dictionary**
 Complete the `get_default_liquids()` function with liquid properties.
 
