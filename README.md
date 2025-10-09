@@ -15,7 +15,7 @@ Students will learn backend programming by filling in missing Python code!
 
 Learn the basics of Python [HERE](https://www.w3schools.com/python/python_intro.asp)
 
-
+Learn The basics of Git and GitHub [HERE](https://docs.github.com/en/get-started)
 
 ## Getting Started
 
