@@ -26,7 +26,7 @@ Learn the basics of Python [HERE](https://www.w3schools.com/python/python_intro.
 - Set up code formatting and error detection
 
 ### Step 2 : Install Python (if not already installed)
-- Go to [Python](python.org)
+- Go to [Python](https://www.python.org/downloads/)
 - Click "Download Python" (get version 3.8 or newer)
 - **IMPORTANT**: Check "Add Python to PATH" during installation
 - Install normally
