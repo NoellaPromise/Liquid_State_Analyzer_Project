@@ -31,22 +31,25 @@ Learn The basics of Git and GitHub [HERE](https://docs.github.com/en/get-started
 - **IMPORTANT**: Check "Add Python to PATH" during installation
 - Install normally
 
-### Step 3 : Clone the project from GitHub
-1. Open Terminal/command prompt
-  - Press Win + R, type cmd, press Enter
+### Step 3 : Fork Coach's repository
+ 1. Click on this github link https://github.com/NoellaPromise/Liquid_State_Analyzer_Project
+ 2. Click the **Fork** button (top-right of the page).  
+ 3. GitHub will create `https://github.com/your-username/project-name`—this is **your fork**.
+ 4. Now, Clone your Fork
+ 5. Open your Terminal (not the VS code terminal)
 
-2. Navigate to where you want the project:
-    `cd Desktop`
+`# change to a folder where you want to keep class projects`
 
-3. Clone the repository:`git  clone https://github.com/NoellaPromise/Liquid_State_Analyzer_Project.git`
-  
-4. Enter the project folder:
-    `cd LIQUID_STATE_ANALYZER_PROJECT`
+`cd ~/projects   # or any folder you choose`
+
+`git clone https://github.com/your-username/project-name.git`
+
+`cd project-name`
 
 ### Step 4 : Test your Setup
 
 **Open Command Prompt/Terminal in your project folder**
-  - Run : `python liquid_analyzer.py`  ***This will have errors because you need to fill in the blanks!***
+  - Run : `python3 liquid_analyzer.py`  ***This will have errors because you need to fill in the blanks!***
 
 
 
