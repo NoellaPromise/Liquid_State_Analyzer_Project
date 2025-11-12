@@ -1,1 +1,27 @@
+# Data files (auto-generated)
+data/analysis_results.json
+# Note: liquids_data.json is not used in level-based approach
+# (Liquid data is stored in code via Level 1, not in files)
+# Keep data/ folder but ignore generated files
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
 .vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

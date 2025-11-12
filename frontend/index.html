@@ -61,7 +61,37 @@
     </div>
 
     <script>
-      // Simple JavaScript that reads from a results file created by Python
+      // Frontend that calls the Python backend API
+      const API_URL = 'http://localhost:5000/api';
+
+      // Load liquids when page loads
+      window.addEventListener('DOMContentLoaded', function() {
+        loadLiquids();
+      });
+
+      function loadLiquids() {
+        fetch(`${API_URL}/liquids`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              const select = document.getElementById("liquid");
+              // Clear existing options except the first one
+              select.innerHTML = '<option value="">Choose a liquid...</option>';
+              data.liquids.forEach(liquid => {
+                const option = document.createElement('option');
+                option.value = liquid.key;
+                option.textContent = liquid.name;
+                select.appendChild(option);
+              });
+            } else {
+              showError("Could not load liquids. Make sure backend_server.py is running!");
+            }
+          })
+          .catch(error => {
+            showError("Cannot connect to backend server. Please run: python backend_server.py");
+            console.error("Error:", error);
+          });
+      }
 
       document
         .getElementById("analyzerForm")
@@ -72,7 +102,7 @@
             document.getElementById("temperature").value
           );
           const pressure = parseFloat(
-            document.getElementById("pressure").value
+            document.getElementById("pressure").value || 1.0
           );
           const liquidType = document.getElementById("liquid").value;
 
@@ -86,69 +116,31 @@
             return;
           }
 
-          // Show message to run Python program
-          showError(
-            "Now run your Python program with these values: Temperature=" +
-              temperature +
-              "°C, Pressure=" +
-              pressure +
-              " atm, Liquid=" +
-              liquidType +
-              ". Then refresh this page to see results!"
-          );
-
-          // Try to read results from a file (this would need a local server in real implementation)
-          // For now, we'll simulate the results
-          setTimeout(() => {
-            simulateResults(temperature, pressure, liquidType);
-          }, 2000);
+          // Call backend API
+          fetch(`${API_URL}/analyze`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              temperature: temperature,
+              pressure: pressure,
+              liquid: liquidType
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              displayResults(data.result);
+            } else {
+              showError(data.error || "Analysis failed!");
+            }
+          })
+          .catch(error => {
+            showError("Cannot connect to backend server. Please run: python backend_server.py");
+            console.error("Error:", error);
+          });
         });
-
-      function simulateResults(temperature, pressure, liquidType) {
-        // This simulates what the Python backend would return
-        const liquidData = {
-          water: { name: "Water (H₂O)", freezing: 0, boiling: 100 },
-          ethanol: {
-            name: "Ethanol (C₂H₅OH)",
-            freezing: -114.1,
-            boiling: 78.4,
-          },
-          mercury: { name: "Mercury (Hg)", freezing: -38.8, boiling: 356.7 },
-          nitrogen: { name: "Nitrogen (N₂)", freezing: -210, boiling: -195.8 },
-          oxygen: { name: "Oxygen (O₂)", freezing: -218.8, boiling: -183 },
-        };
-
-        const liquid = liquidData[liquidType];
-        const adjustedBoiling = liquid.boiling + (pressure - 1) * 10;
-
-        let state, stateClass, description, flaskState;
-
-        if (temperature <= liquid.freezing) {
-          state = "SOLID (FROZEN)";
-          stateClass = "solid-state";
-          flaskState = "frozen";
-          description = "The liquid is frozen solid!";
-        } else if (temperature >= adjustedBoiling) {
-          state = "GAS (VAPOR)";
-          stateClass = "gas-state";
-          flaskState = "boiling";
-          description = "The liquid is boiling and turning to gas!";
-        } else {
-          state = "LIQUID (STILL)";
-          stateClass = "liquid-state";
-          flaskState = "still";
-          description = "The liquid is in normal liquid state.";
-        }
-
-        displayResults({
-          liquid_name: liquid.name,
-          temperature: temperature,
-          pressure: pressure,
-          state: state,
-          flask_state: flaskState,
-          description: description,
-        });
-      }
 
       function displayResults(results) {
         document.getElementById("error").style.display = "none";
@@ -156,16 +148,22 @@
         showFlaskState(results.flask_state);
 
         const stateElement = document.getElementById("stateName");
-        stateElement.textContent = results.state;
+        // Format state for display
+        let stateDisplay = results.state;
         stateElement.className = "state-title";
-
-        if (results.state.includes("SOLID")) {
+        
+        if (results.state === "SOLID") {
+          stateDisplay = "SOLID (FROZEN)";
           stateElement.classList.add("solid-state");
-        } else if (results.state.includes("LIQUID")) {
+        } else if (results.state === "LIQUID") {
+          stateDisplay = "LIQUID (STILL)";
           stateElement.classList.add("liquid-state");
-        } else if (results.state.includes("GAS")) {
+        } else if (results.state === "GAS") {
+          stateDisplay = "GAS (VAPOR)";
           stateElement.classList.add("gas-state");
         }
+        
+        stateElement.textContent = stateDisplay;
 
         document.getElementById("liquidName").textContent = results.liquid_name;
         document.getElementById(
