@@ -2,6 +2,8 @@
 
 Welcome! You're about to build something amazing - a program that can tell you if water (or any liquid) is frozen ❄️, liquid 💧, or boiling 💨 based on temperature and pressure!
 
+Deployed version (How the frontend part of the project looks like): https://noellapromise.github.io/Liquid-State-Analyzer-Demo/
+
 ## 🎯 What You'll Build
 
 By the end of this project, you'll have created a **Liquid State Analyzer** that:
